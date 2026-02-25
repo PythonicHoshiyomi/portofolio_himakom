@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Local stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div id="app">
+  <nav :class="{ scrolled: scrolled }">
+    <div class="nav-logo">{{ firstName }}.</div>
+    <ul class="nav-links">
+      <li v-for="item in navItems" :key="item.id">
+        <a :href="'#' + item.id" :class="{ active: activeSection === item.id }">{{ item.label }}</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="beranda">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Portfolio · 2025</div>
+      <h1 class="hero-name">
+        {{ firstName }}<br>
+        <span class="line2">{{ lastName }}</span>
+      </h1>
+      <p class="hero-desc">{{ tagline }}</p>
+      <div class="hero-cta">
+        <a href="#profil" class="btn-primary">Lihat Profil</a>
+        <a href="#kontak" class="btn-outline">Hubungi Saya</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- PROFIL -->
+  <section id="profil">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Profil Diri</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="profil-grid">
+      <div class="reveal" style="transition-delay:0.1s">
+        <div class="profil-img-wrap">
+          <div class="profil-avatar">🧑‍💻</div>
+        </div>
+      </div>
+      <div class="profil-text reveal" style="transition-delay:0.2s">
+        <div class="profil-tag">Tentang Saya</div>
+        <h3>{{ namaLengkap }}</h3>
+        <p>{{ bio1 }}</p>
+        <p>{{ bio2 }}</p>
+        <div class="profil-info">
+          <div class="info-item" v-for="item in profilInfo" :key="item.label">
+            <div class="info-label">{{ item.label }}</div>
+            <div class="info-val">{{ item.value }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILL -->
+  <section id="skill">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Skill &amp; Minat</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skill-grid">
+      <div v-for="(skill, i) in skills" :key="i" class="skill-card reveal" :style="{ transitionDelay: (i * 0.08) + 's' }">
+        <div class="skill-icon">{{ skill.icon }}</div>
+        <div class="skill-name">{{ skill.name }}</div>
+        <div class="skill-desc">{{ skill.desc }}</div>
+        <div class="skill-tags">
+          <span v-for="tag in skill.tags" :key="tag" class="skill-tag">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PENUGASAN -->
+  <section id="penugasan">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Penugasan</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="penugasan-tabs reveal">
+      <button
+        v-for="tab in penugasanTabs" :key="tab.id"
+        class="tab-btn" :class="{ active: activeTab === tab.id }"
+        @click="activeTab = tab.id"
+      >{{ tab.label }}</button>
+    </div>
+    <div v-for="tab in penugasanTabs" :key="tab.id" class="penugasan-panel" :class="{ active: activeTab === tab.id }">
+      <div v-for="(item, i) in tab.items" :key="i" class="penugasan-card">
+        <div class="penugasan-meta">
+          <span class="penugasan-num">{{ tab.id.toUpperCase().replace('PENUGASAN','P') }}-{{ String(i+1).padStart(2,'0') }}</span>
+          <span class="penugasan-date">{{ item.date }}</span>
+        </div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.desc }}</p>
+        <div class="penugasan-result">
+          <div class="penugasan-result-label">Hasil / Output</div>
+          <div style="font-size:0.9rem">{{ item.result }}</div>
+        </div>
+        <!-- jika penugasan2 dokumen, tampilkan preview PDF -->
+        <div v-if="tab.id === 'penugasan2' && i === 0" class="penugasan-preview">
+          <iframe src="penugasan/TOR.pdf" width="100%" height="400" title="Preview TOR"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO / ORGANISASI -->
+  <section id="portfolio">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">{{ portfolioTitle }}</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="portfolio-grid">
+      <div v-for="(item, i) in portfolioItems" :key="i" class="portfolio-card reveal" :style="{ transitionDelay: (i * 0.1) + 's' }">
+        <div class="portfolio-thumb">{{ item.emoji }}</div>
+        <div class="portfolio-body">
+          <div class="portfolio-category">{{ item.category }}</div>
+          <div class="portfolio-title">{{ item.title }}</div>
+          <div class="portfolio-desc">{{ item.desc }}</div>
+          <div class="portfolio-footer">
+            <span>{{ item.year }}</span>
+            <a href="#" class="portfolio-link">Detail →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAK -->
+  <section id="kontak">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Kontak</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="kontak-grid">
+      <div class="reveal">
+        <h3>Mari Terhubung</h3>
+        <p>Tertarik berkolaborasi atau ingin mengetahui lebih lanjut? Jangan ragu untuk menghubungi saya.</p>
+        <div class="kontak-links">
+          <a href="mailto:email@contoh.com" class="kontak-link">
+            <span class="kontak-link-icon">📧</span>
+            <div class="kontak-link-info">
+              <div class="kontak-link-type">Email</div>
+              <div class="kontak-link-val">gizajirndhara@gmail.com</div>
+            </div>
+            <span>→</span>
+          </a>
+          <a href="#" class="kontak-link">
+            <span class="kontak-link-icon">🐱</span>
+            <div class="kontak-link-info">
+              <div class="kontak-link-type">GitHub</div>
+              <div class="kontak-link-val">github.com/PythonicHoshiyomi</div>
+            </div>
+            <span>→</span>
+          </a>
+          <a href="#" class="kontak-link">
+            <span class="kontak-link-icon">📱</span>
+            <div class="kontak-link-info">
+              <div class="kontak-link-type">WhatsApp</div>
+              <div class="kontak-link-val">+62 878-0283-3129</div>
+            </div>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:0.15s">
+        <form class="kontak-form" @submit.prevent="submitForm">
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap</label>
+            <input v-model="form.nama" type="text" class="form-input" placeholder="Nama Anda" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input v-model="form.email" type="email" class="form-input" placeholder="email@anda.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pesan</label>
+            <textarea v-model="form.pesan" class="form-textarea" placeholder="Tulis pesan Anda..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            {{ formSent ? '✓ Pesan Terkirim!' : 'Kirim Pesan' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">{{ firstName }}.</div>
+    <div>© 2025 {{ namaLengkap }}. Dibuat dengan ❤️</div>
+    <a href="#beranda" style="color:var(--accent);text-decoration:none;font-size:0.78rem">↑ Kembali ke Atas</a>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+
+createApp({
+  setup() {
+    // ============================================================
+    // ✏️  EDIT DATA DI BAWAH INI SESUAI KEBUTUHAN ANDA
+    // ============================================================
+
+    const namaLengkap = ref('Giza Jirndhara');
+    const tagline = ref('Mahasiswa yang bersemangat menjelajahi dunia teknologi, kreativitas, dan inovasi.');
+
+    const bio1 = ref('Saya adalah seorang mahasiswa yang memiliki minat mendalam di bidang teknologi informasi dan pengembangan perangkat lunak. Dengan semangat belajar yang tinggi, saya terus mengembangkan kompetensi diri melalui berbagai penugasan dan proyek.');
+    const bio2 = ref('Saya percaya bahwa kolaborasi dan kreativitas adalah kunci untuk menciptakan solusi yang bermakna. Visi saya adalah berkontribusi nyata pada transformasi digital Indonesia.');
+
+    const profilInfo = ref([
+      { label: 'Perguruan Tinggi', value: 'Politeknik Negeri Bandung' },
+      { label: 'Jurusan', value: 'Teknik Komputer dan Informatika'},
+      { label: 'Program Studi', value: 'D4 - Teknik Informatika' },
+      { label: 'Angkatan', value: '2025' },
+      { label: 'Lokasi', value: 'Bandung, Indonesia' },
+    ]);
+
+    const skills = ref([
+      { icon: '💻', name: 'Pemrograman', desc: 'Pengembangan aplikasi web dan mobile dengan berbagai bahasa pemrograman modern.', tags: ['Python', 'JavaScript', 'Java'] },
+      { icon: '🤝', name: 'Kolaborasi', desc: 'Berkomunikasi efektif, dan berkolaborasi dalam lingkungan dinamis.', tags: ['Teamwork', 'Public Speaking'] },
+    ]);
+
+    const activeTab = ref('penugasan2');
+    const penugasanTabs = ref([
+      {
+        id: 'penugasan2', label: 'Penugasan 2',
+        items: [{
+          title: 'Dokumen',
+          date: 'Maret 2025',
+          desc: 'Deskripsi penugasan kedua. Jelaskan apa yang dikerjakan, tujuan, dan metodologi yang digunakan dalam menyelesaikan penugasan ini secara detail.',
+          result: 'Hasil yang dicapai: laporan, dokumen, atau output lainnya yang dihasilkan dari penugasan ini.',
+        }],
+      },
+      {
+        id: 'penugasan3', label: 'Penugasan 3',
+        items: [{
+          title: 'Infografis',
+          date: 'April 2025',
+          desc: 'Deskripsi penugasan ketiga. Jelaskan apa yang dikerjakan, tujuan, dan metodologi yang digunakan dalam penugasan ini.',
+          result: 'Hasil yang dicapai beserta evaluasi dan pembelajaran yang didapat dari penugasan ketiga ini.',
+        }],
+      },
+      {
+        id: 'penugasan4', label: 'Penugasan 4',
+        items: [{
+          title: 'Video',
+          date: 'Mei 2025',
+          desc: 'Deskripsi penugasan keempat. Jelaskan apa yang dikerjakan, tujuan, dan metodologi yang digunakan dalam penugasan ini.',
+          result: 'Hasil akhir penugasan keempat dan dampak yang dihasilkan dari pekerjaan ini.',
+        }],
+      },
+    ]);
+
+    // Ganti title & isi jika ingin tampilkan Portofolio/Proyek
+    const portfolioTitle = ref('Riwayat Organisasi');
+    const portfolioItems = ref([
+      { emoji: '🏛️', category: 'Organisasi Kampus', title: 'Ketua Ekstrakulikuler', desc: 'Aktif sebagai ketua ekstrakulikuler karate.', year: '2023–2024' },
+    ]);
+
+    // ============================================================
+
+    const firstName = computed(() => namaLengkap.value.split(' ')[0]);
+
+    const form = ref({ nama: '', email: '', pesan: '' });
+    const formSent = ref(false);
+    function submitForm() {
+      formSent.value = true;
+      form.value = { nama: '', email: '', pesan: '' };
+      setTimeout(() => formSent.value = false, 4000);
+    }
+
+    const navItems = [
+      { id: 'profil', label: 'Profil' },
+      { id: 'skill', label: 'Skill' },
+      { id: 'penugasan', label: 'Penugasan' },
+      { id: 'portfolio', label: 'Organisasi' },
+      { id: 'kontak', label: 'Kontak' },
+    ];
+    const scrolled = ref(false);
+    const activeSection = ref('beranda');
+
+    onMounted(() => {
+      window.addEventListener('scroll', () => {
+        scrolled.value = window.scrollY > 60;
+        const ids = ['kontak', 'portfolio', 'penugasan', 'skill', 'profil', 'beranda'];
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && window.scrollY + 140 >= el.offsetTop) {
+            activeSection.value = id; break;
+          }
+        }
+      });
+
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+      const cursor = document.getElementById('cursor');
+      const ring = document.getElementById('cursorRing');
+      document.addEventListener('mousemove', e => {
+        cursor.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
+        ring.style.transform = `translate(${e.clientX - 18}px, ${e.clientY - 18}px)`;
+      });
+      document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+      });
+    });
+
+    return {
+      namaLengkap, firstName, tagline, bio1, bio2, profilInfo,
+      skills, activeTab, penugasanTabs,
+      portfolioTitle, portfolioItems,
+      form, formSent, submitForm,
+      navItems, scrolled, activeSection,
+    };
+  }
+}).mount('#app');
+</script>
+
+<!-- External script -->
+<script src="script.js"></script>
+</body>
+</html>
