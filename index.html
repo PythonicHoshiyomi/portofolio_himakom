@@ -122,6 +122,10 @@
         <div v-if="tab.id === 'penugasan2' && i === 0" class="penugasan-preview">
           <iframe src="penugasan/TOR.pdf" width="100%" height="400" title="Preview TOR"></iframe>
         </div>
+        <!-- jika penugasan3 infografis, tampilkan gambar -->
+        <div v-if="tab.id === 'penugasan3' && i === 0" class="penugasan-preview">
+          <img src="penugasan/infografis.jpg" alt="Infografis" style="width:100%;max-height:400px;object-fit:contain;" />
+        </div>
       </div>
     </div>
   </section>
